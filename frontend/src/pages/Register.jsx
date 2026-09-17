@@ -1,6 +1,12 @@
+
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import api from "../services/api"
+import { useDispatch, useSelector } from "react-redux"
+
+import {
+    registerUserAsync,
+    clearAuthError
+} from "../store/slices/authSlice"
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -14,15 +20,27 @@ function Register() {
 
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-    const [loading, setLoading] = useState(false)
 
+    const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const {
+        loading,
+        error: authError
+    } = useSelector(
+        (state) => state.auth
+    )
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         })
+
+        setError("")
+        setSuccess("")
+
+        dispatch(clearAuthError())
     }
 
     const handleSubmit = async (e) => {
@@ -31,46 +49,60 @@ function Register() {
         setError("")
         setSuccess("")
 
-        if (Object.values(formData).some((value) => !value.trim())) {
+        dispatch(clearAuthError())
+
+        if (
+            Object.values(formData).some(
+                (value) => !value.trim()
+            )
+        ) {
             setError("All fields are required")
             return
         }
 
         if (formData.password.length < 6) {
-            setError("Password must be at least 6 characters")
+            setError(
+                "Password must be at least 6 characters"
+            )
             return
         }
 
-        if (formData.password !== formData.confirmPassword) {
+        if (
+            formData.password !==
+            formData.confirmPassword
+        ) {
             setError("Passwords do not match")
             return
         }
 
-        try {
-            setLoading(true)
-
-            const response = await api.post("/auth/register", {
+        const result = await dispatch(
+            registerUserAsync({
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 username: formData.username,
                 email: formData.email,
                 password: formData.password
             })
+        )
 
-            setSuccess(response.data.message || "Registration successful")
+        if (
+            registerUserAsync.fulfilled.match(
+                result
+            )
+        ) {
+            setSuccess(
+                result.payload?.message ||
+                "Registration successful"
+            )
 
             setTimeout(() => {
                 navigate("/login")
             }, 1500)
-
-        } catch (error) {
-            setError(
-                error.response?.data?.message || "Registration failed"
-            )
-        } finally {
-            setLoading(false)
         }
     }
+
+    const displayError =
+        error || authError
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8">
@@ -86,9 +118,9 @@ function Register() {
                     </p>
                 </div>
 
-                {error && (
+                {displayError && (
                     <div className="mb-5 p-3 rounded-lg bg-red-100 text-red-600 text-sm">
-                        {error}
+                        {displayError}
                     </div>
                 )}
 
@@ -98,7 +130,10 @@ function Register() {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-4"
+                >
 
                     <div className="grid grid-cols-2 gap-4">
                         <input
@@ -161,13 +196,16 @@ function Register() {
                         disabled={loading}
                         className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-blue-400"
                     >
-                        {loading ? "Registering..." : "Register"}
+                        {loading
+                            ? "Registering..."
+                            : "Register"}
                     </button>
 
                 </form>
 
                 <p className="text-center text-gray-600 mt-6">
                     Already have an account?{" "}
+
                     <Link
                         to="/login"
                         className="text-blue-600 font-semibold hover:underline"
@@ -182,3 +220,4 @@ function Register() {
 }
 
 export default Register
+

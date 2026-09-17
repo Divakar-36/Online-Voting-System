@@ -4,7 +4,10 @@ import {
     createSlice
 } from "@reduxjs/toolkit"
 
-import { loginUser } from "../../services/authService"
+import {
+    loginUser,
+    registerUser
+} from "../../services/authService"
 
 const defaultAuth = {
     user: null,
@@ -121,6 +124,58 @@ export const loginUserAsync =
         }
     )
 
+export const registerUserAsync =
+    createAsyncThunk(
+        "auth/register",
+        async (
+            userData,
+            { rejectWithValue }
+        ) => {
+            try {
+                const data =
+                    await registerUser(
+                        userData
+                    )
+
+                return data
+            } catch (error) {
+                if (
+                    error.response?.status ===
+                    409
+                ) {
+                    return rejectWithValue(
+                        error.response?.data?.message ||
+                        "Username or email already exists."
+                    )
+                }
+
+                if (
+                    error.response?.status ===
+                    400
+                ) {
+                    return rejectWithValue(
+                        error.response?.data?.message ||
+                        "Invalid registration details."
+                    )
+                }
+
+                if (
+                    error.response?.status ===
+                    403
+                ) {
+                    return rejectWithValue(
+                        "Registration access denied."
+                    )
+                }
+
+                return rejectWithValue(
+                    error.response?.data?.message ||
+                    "Registration failed. Please try again."
+                )
+            }
+        }
+    )
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -155,6 +210,9 @@ const authSlice = createSlice({
 
     extraReducers: (builder) => {
         builder
+
+            // LOGIN
+
             .addCase(
                 loginUserAsync.pending,
                 (state) => {
@@ -225,6 +283,38 @@ const authSlice = createSlice({
                         "Login failed. Please try again."
                 }
             )
+
+            // REGISTRATION
+
+            .addCase(
+                registerUserAsync.pending,
+                (state) => {
+                    state.loading = true
+                    state.error = null
+                }
+            )
+
+            .addCase(
+                registerUserAsync.fulfilled,
+                (state) => {
+                    state.loading = false
+                    state.error = null
+                }
+            )
+
+            .addCase(
+                registerUserAsync.rejected,
+                (
+                    state,
+                    action
+                ) => {
+                    state.loading = false
+
+                    state.error =
+                        action.payload ||
+                        "Registration failed. Please try again."
+                }
+            )
     }
 })
 
@@ -235,4 +325,5 @@ export const {
 } = authSlice.actions
 
 export default authSlice.reducer
+
 
