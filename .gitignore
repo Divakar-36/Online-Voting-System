@@ -1,0 +1,36 @@
+```gitignore
+# STS / Eclipse
+.metadata/
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+dist/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Backend build
+backend/target/
+
+# Local Spring configuration
+backend/src/main/resources/application-local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+```
