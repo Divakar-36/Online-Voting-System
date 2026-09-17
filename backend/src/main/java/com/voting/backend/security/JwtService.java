@@ -12,13 +12,11 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String secret =
-            "OnlineVotingSystemSecretKeyForJwtAuthentication2026";
+    private final String secret = System.getenv("JWT_SECRET");
 
-    private final SecretKey key = Keys.hmacShaKeyFor(
-            secret.getBytes(StandardCharsets.UTF_8)
-    );
-
+private final SecretKey key = Keys.hmacShaKeyFor(
+    secret.getBytes(StandardCharsets.UTF_8)
+);
     public String generateToken(String email, String role) {
 
         return Jwts.builder()
