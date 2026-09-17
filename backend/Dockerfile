@@ -8,9 +8,12 @@ COPY mvnw .
 COPY pom.xml .
 
 RUN chmod +x mvnw
+
+COPY src src
+
 RUN ./mvnw clean package -DskipTests
 
-COPY target/*.jar app.jar
+RUN cp target/*.jar app.jar
 
 EXPOSE 8080
 
