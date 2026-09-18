@@ -1,58 +1,58 @@
 # Online Voting System
 
-A full-stack web application for conducting secure online elections with separate **Admin** and **Voter** roles.
+A full-stack web application for conducting secure online elections with role-based access for administrators and voters.
 
-## Overview
+## Live Demo
 
-The Online Voting System allows administrators to create and manage elections and candidates, while registered voters can participate in active elections and cast their vote once per election.
+**Frontend:**
+https://online-voting-system-mu-nine.vercel.app/
 
-The application uses **React.js** for the frontend and **Spring Boot** for the backend, with **MySQL** and **Hibernate/JPA** for data persistence.
+**Backend:**
+https://online-voting-system-g4s9.onrender.com/
+
+## GitHub
+
+https://github.com/Divakar-36/Online-Voting-System
 
 ## Features
 
 ### Admin
 
-* Admin authentication
-* Create elections
-* Update election details
-* Activate or deactivate elections
-* Delete elections
-* Add candidates to elections
-* Edit candidate information
-* Delete candidates
+* Secure admin login
+* Create and manage elections
+* Add and manage candidates
+* Activate elections
 * View election results
+* Delete elections
 
 ### Voter
 
-* Voter registration
-* Secure login
+* Voter registration and login
 * View active elections
-* View candidates for an election
+* View election candidates
 * Cast a vote
-* Prevent duplicate voting for the same election
-* View voting status
+* Prevent duplicate voting
+* View voting results
 
-## Authentication & Security
+### Security
 
-* Role-based authentication with `ADMIN` and `VOTER` roles
 * JWT-based authentication
+* Role-based authorization
+* ADMIN and VOTER roles
 * Password encryption using BCrypt
-* Protected frontend routes
-* Protected backend API endpoints
-* Stateless Spring Security configuration
-* Duplicate voting protection using database constraints and server-side validation
+* Protected REST APIs
+* Duplicate-vote prevention at the backend
 
 ## Tech Stack
 
 ### Frontend
 
 * React.js
-* Redux Toolkit
 * React Router
+* Redux Toolkit
 * Axios
 * Tailwind CSS
 * Vite
-* JavaScript (ES6+)
 
 ### Backend
 
@@ -62,114 +62,108 @@ The application uses **React.js** for the frontend and **Spring Boot** for the b
 * JWT
 * Spring Data JPA
 * Hibernate
-* Maven
+* REST APIs
 
 ### Database
 
 * MySQL
 
-### Development Tools
+### Deployment
 
-* VS Code
-* Spring Tool Suite (STS)
-* Git
-* GitHub
-* Postman
+* Vercel — Frontend
+* Render — Backend
+* Railway — MySQL Database
 
-## Architecture
+## Application Flow
 
 ```text
-Online Voting System
-│
-├── Frontend
-│   ├── React.js
-│   ├── Redux Toolkit
-│   ├── React Router
-│   └── Axios
-│
-├── Backend
-│   ├── Spring Boot
-│   ├── REST APIs
-│   ├── Spring Security
-│   ├── JWT Authentication
-│   └── Hibernate/JPA
-│
-└── Database
-    └── MySQL
+Admin
+  │
+  ├── Login
+  ├── Create Election
+  ├── Add Candidates
+  ├── Activate Election
+  └── View Results
+
+Voter
+  │
+  ├── Register/Login
+  ├── View Active Election
+  ├── Select Candidate
+  ├── Cast Vote
+  └── View Result
+
+Security
+  │
+  ├── JWT Authentication
+  ├── Role-Based Authorization
+  └── Duplicate Vote Prevention
 ```
 
-## Database Entities
+## Voting Process
 
-The application uses the following main entities:
-
-* `User`
-* `Election`
-* `Candidate`
-* `Vote`
-
-### Relationships
-
-```text
-User
- │
- └── Vote
-      │
-      ├── Election
-      │
-      └── Candidate
-
-Election
- │
- └── Candidates
-```
-
-A vote connects a voter, election, and selected candidate.
-
-The system prevents a voter from voting more than once in the same election using server-side validation and a database-level unique constraint.
+1. Admin creates an election.
+2. Admin adds candidates.
+3. Admin activates the election.
+4. Voter logs into the system.
+5. Voter selects an election.
+6. Voter selects a candidate.
+7. Backend validates the voting request.
+8. Vote is stored in MySQL.
+9. A voter cannot vote again in the same election.
+10. Admin can view the election results.
 
 ## Project Structure
 
 ```text
 Online-Voting-System/
 │
-├── backend/
-│   ├── src/main/java/com/voting/backend/
-│   │   ├── config/
-│   │   ├── controller/
-│   │   ├── dto/
-│   │   ├── entity/
-│   │   ├── repository/
-│   │   ├── security/
-│   │   └── service/
-│   │
-│   └── src/main/resources/
-│       └── application.properties
-│
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── services/
-│   │   └── store/
-│   │
-│   ├── package.json
-│   └── vite.config.js
+│   │   ├── store/
+│   │   └── App.jsx
+│   └── package.json
 │
-├── .gitignore
+├── backend/
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       └── resources/
+│   ├── pom.xml
+│   └── Dockerfile
+│
 └── README.md
 ```
 
-## Running the Project Locally
+## Local Setup
 
-### Backend
-
-Navigate to the backend:
+### 1. Clone the repository
 
 ```bash
-cd backend
+git clone https://github.com/Divakar-36/Online-Voting-System.git
+cd Online-Voting-System
 ```
 
-Run the Spring Boot application using STS or:
+### 2. Start MySQL
+
+Create a MySQL database:
+
+```sql
+CREATE DATABASE online_voting;
+```
+
+Configure your local database credentials in:
+
+```text
+backend/src/main/resources/application-local.properties
+```
+
+### 3. Start the Backend
+
+Open the `backend` folder and run:
 
 ```bash
 ./mvnw spring-boot:run
@@ -181,170 +175,71 @@ On Windows:
 mvnw.cmd spring-boot:run
 ```
 
-The backend runs on:
+Backend:
 
 ```text
 http://localhost:8080
 ```
 
-### Frontend
+### 4. Start the Frontend
 
-Navigate to the frontend:
+Open another terminal:
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-The frontend runs on:
+Frontend:
 
 ```text
 http://localhost:5173
 ```
 
-## Environment Configuration
+## API
 
-Sensitive configuration is kept outside the GitHub repository.
+The application uses REST APIs for communication between the React frontend and Spring Boot backend.
 
-The application uses:
-
-```text
-application-local.properties
-```
-
-for local database configuration.
-
-The JWT secret is provided through the `JWT_SECRET` environment variable.
-
-Sensitive files and credentials are excluded using `.gitignore`.
-
-## Main API Areas
-
-### Authentication
+Authentication:
 
 ```text
-POST /api/auth/register
 POST /api/auth/login
+POST /api/auth/register
 ```
 
-### Admin
+Admin operations:
 
 ```text
-/api/admin/elections
-/api/admin/candidates
-/api/admin/elections/{id}/results
+/api/admin/**
 ```
 
-### Voter
+Voter operations:
 
 ```text
-GET  /api/voter/elections
-GET  /api/voter/elections/{id}/candidates
-GET  /api/voter/elections/{id}/status
-POST /api/voter/elections/{electionId}/candidates/{candidateId}/vote
+/api/voter/**
 ```
 
-## Voting Flow
+## Key Highlights
 
-```text
-Voter Login
-     ↓
-View Active Elections
-     ↓
-Select Election
-     ↓
-View Candidates
-     ↓
-Select Candidate
-     ↓
-Submit Vote
-     ↓
-Server Validates Vote
-     ↓
-Vote Stored in Database
-     ↓
-Voting Status Updated
-```
-
-## Security Flow
-
-```text
-Login
-  ↓
-Backend validates credentials
-  ↓
-JWT token generated
-  ↓
-Frontend stores authentication state
-  ↓
-JWT sent with API requests
-  ↓
-Spring Security validates JWT
-  ↓
-Role checked
-  ↓
-Protected API accessed
-```
-
-## Future Improvements
-
-* Deploy frontend and backend to production
-* Add email notifications
-* Add election scheduling automation
-* Add audit logging
-* Add automated tests
-* Add Docker support
-* Improve result visualization
-* Add cloud database support
+* Full-stack React + Spring Boot application
+* REST API based architecture
+* JWT authentication
+* Role-based authorization
+* MySQL database with Hibernate/JPA
+* Redux Toolkit state management
+* Production deployment
+* Backend-level duplicate-vote protection
+* Admin election and candidate management
 
 ## Author
 
 **Divakar Dupana**
 
-B.Tech – Computer Science and Engineering
+B.Tech — Computer Science and Engineering
 
-GitHub: [Divakar-36](https://github.com/Divakar-36)
+GitHub:
+https://github.com/Divakar-36
 
-LinkedIn: [Divakar Dupana](https://www.linkedin.com/in/divakar-dupana-795069368)
-
-````
-
-### Step 2 — Save
-
-Press:
-
-**Ctrl + S**
-
-### Step 3 — Check Git
-
-In your VS Code terminal, make sure you are here:
-
-```text
-C:\Users\divak\OneDrive\Desktop\Online-Voting-System>
-````
-
-Run:
-
-```bash id="c5e9zn"
-git status
-```
-
-You should see:
-
-```text
-Untracked files:
-    README.md
-```
-
-Send me the `git status` output before we commit it.
+LinkedIn:
+https://www.linkedin.com/in/divakar-dupana-795069368
